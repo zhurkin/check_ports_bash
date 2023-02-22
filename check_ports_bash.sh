@@ -31,5 +31,31 @@ check_target() {
     done
 }
 
-# Call the function to check target server availability / Вызов функции проверки доступности целевых серверов
-check_target
+# Check for command line arguments
+if [[ $# -eq 0 ]]; then
+  check_target
+  exit 0
+elif [[ "$1" == "-h" || "$1" == "--help" ]]; then
+  echo "Usage: check_ports_bash.sh [-t TARGET] [-h]"
+  echo "  -t, --target       target server to check, in the format of IP or domain name followed by port number, separated by /, :, or space"
+  echo "  -h, --help         display this help and exit"
+  exit 0
+elif [[ "$1" == "-t" || "$1" == "--target" ]]; then
+  shift
+  if [[ $# -eq 1 ]]; then
+    VAR_CHECK_TARGET=("$1")
+    check_target
+    exit 0
+  elif [[ $# -eq 2 ]]; then
+    IFS=$' \t\n'
+    VAR_CHECK_TARGET=("$1 $2")
+    check_target
+    exit 0
+  else
+    echo "Error: invalid number of arguments for -t option"
+    exit 1
+  fi
+else
+  echo "Error: invalid option"
+  exit 1
+fi
